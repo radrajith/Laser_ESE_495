@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
+import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
     private Button closeButton;
@@ -36,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter btAdapter;
     private BluetoothSocket mySocket;
     private BluetoothDevice myDevice;
+    private Handler myHandler = new Handler();
+    private TextView objectTemp;
+    private String readData;
+    private int bytesRead;
+    private boolean run = true;
     OutputStream myOutput;
     InputStream myInput;
     Thread thread;
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sendData = (EditText)findViewById(R.id.textBox);
+        objectTemp = (TextView)findViewById(R.id.objectTemp);
         btConfigure();
         closeButton = (Button)findViewById(R.id.closeButton);
         closeButton.setOnClickListener(new View.OnClickListener(){
@@ -100,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+//code examples used from http://stackoverflow.com/questions/10327506/android-arduino-bluetooth-data-transfer
+// and android bluetooth api
 
     public void openBt() {
         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
@@ -110,7 +119,8 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("problem at serversocket creation");
             System.out.println("didnt connect");
             Toast.makeText(getApplicationContext(), "cannot connect", Toast.LENGTH_LONG).show();
-        }
+            sendData.setText("Didnt Connect restart app");
+            }
         try {
             myInput = mySocket.getInputStream();
             myOutput = mySocket.getOutputStream();
@@ -118,8 +128,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             System.out.println("error at stream");
         }
-
-
+        receiveData();
 }
     public void sendData(){
         String writeData = sendData.getText().toString() + "\n";
@@ -131,7 +140,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void receiveData(){
-        String readData  = myInput.
+        final byte[] buffer = new byte[1024];
+        run = true;
+        Toast.makeText(getApplicationContext(), "was here", Toast.LENGTH_LONG).show();
+        thread = new Thread(new Runnable() {
+            public void run() {
+                while (!Thread.currentThread().isInterrupted() && run) {
+                    try {
+                        bytesRead = myInput.read(buffer);
+                        readData = new String(buffer);
+                        myHandler.post(new Runnable() {
+                            public void run() {
+                                objectTemp.setText("hey" + readData);
+                            }
+                        });
+                        myHandler.obtainMessage(1, bytesRead, -1, buffer).sendToTarget();
+                    } catch (IOException e) {
+                        Toast.makeText(getApplicationContext(), "Error reading data", Toast.LENGTH_LONG).show();
+                        run = false;
+                        break;
+                    }
+                }
+
+            }
+        });
+        thread.start();
     }
     public void closeConn(BluetoothSocket mySocket) {
         try {

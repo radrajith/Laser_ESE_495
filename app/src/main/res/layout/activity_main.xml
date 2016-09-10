@@ -13,18 +13,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textBox"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="130dp"
-        android:text="Testing" />
+        android:text="Testing"
+        android:layout_below="@+id/graph"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="120sp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Send"
         android:id="@+id/sendButton"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignStart="@+id/roomTemp"
+        android:layout_below="@+id/graph"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="120sp"
+        android:layout_marginLeft="250sp"
+        android:layout_alignBottom="@+id/textBox" />
 
     <Button
         android:layout_width="wrap_content"
@@ -32,7 +36,7 @@
         android:text="Close Connection"
         android:id="@+id/closeButton"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentEnd="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -40,9 +44,8 @@
         android:layout_height="wrap_content"
         android:text="restart"
         android:id="@+id/restart"
-        android:layout_marginBottom="38dp"
-        android:layout_above="@+id/closeButton"
-        android:layout_alignEnd="@+id/sendButton" />
+        android:layout_alignTop="@+id/closeButton"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -50,9 +53,9 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="temp"
         android:id="@+id/objectTemp"
-        android:layout_marginTop="34dp"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/closeButton" />
+        android:layout_below="@+id/graph"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,6 +63,15 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="temp"
         android:id="@+id/roomTemp"
-        android:layout_alignTop="@+id/objectTemp"
-        android:layout_toEndOf="@+id/closeButton" />
+        android:layout_below="@+id/graph"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50sp"
+        android:layout_marginLeft="250sp" />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:id="@+id/graph"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

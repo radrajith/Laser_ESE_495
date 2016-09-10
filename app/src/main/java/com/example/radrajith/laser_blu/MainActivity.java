@@ -1,4 +1,6 @@
+//package com.jjoe64.graphview;
 package com.example.radrajith.laser_blu;
+
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -29,6 +31,10 @@ import java.util.Set;
 import java.util.UUID;
 import android.os.Handler;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.PointsGraphSeries;
+
 public class MainActivity extends AppCompatActivity {
     private Button closeButton;
     private Button restartButton;
@@ -39,12 +45,14 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice myDevice;
     private Handler myHandler = new Handler();
     private TextView objectTemp;
-    private String readData;
+    private String[] readData;
     private int bytesRead;
     private boolean run = true;
     OutputStream myOutput;
     InputStream myInput;
     Thread thread;
+    GraphView graph;
+    PointsGraphSeries<DataPoint> series;
     //ListView deviceList = findViewById(R.id.listView);
     String deviceName = "HC-06";
 
@@ -73,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
                 sendData();
                 sendData.setText("");
             }
+        });
+        graph = (GraphView) findViewById(R.id.graph);
+        DataPoint[] data = new DataPoint[]{new DataPoint(0,0)};
+        series = new PointsGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 0),
         });
 
     }
@@ -140,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void receiveData(){
-        final byte[] buffer = new byte[1024];
+        final byte[] buffer = new byte[9];
         run = true;
         Toast.makeText(getApplicationContext(), "was here", Toast.LENGTH_LONG).show();
         thread = new Thread(new Runnable() {
@@ -148,10 +161,16 @@ public class MainActivity extends AppCompatActivity {
                 while (!Thread.currentThread().isInterrupted() && run) {
                     try {
                         bytesRead = myInput.read(buffer);
-                        readData = new String(buffer);
+                        //readData = new String(buffer).split(" | ");
+                        //buffer[bytesRead] = '\0';
                         myHandler.post(new Runnable() {
                             public void run() {
-                                objectTemp.setText("hey" + readData);
+                                String bufferData =  new String(buffer).trim();
+                                System.out.println(new String(buffer) + "  " + series.getSize());
+                                //System.out.println(readData[0].trim());
+                                //System.out.println(readData[1].trim());
+                                objectTemp.setText(bufferData);
+                                series.appendData(new DataPoint(series.getSize(), Double.parseDouble(bufferData)), true,100);
                             }
                         });
                         myHandler.obtainMessage(1, bytesRead, -1, buffer).sendToTarget();
@@ -164,11 +183,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        graph.addSeries(series);
         thread.start();
     }
     public void closeConn(BluetoothSocket mySocket) {
         try {
             mySocket.close();
+            myInput.close();
+            myOutput.close();
         } catch (IOException e) {
             System.out.println("error at close");
         }

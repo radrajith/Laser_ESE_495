@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Laser_blu</string>
+    <string name="period">Period</string>
+    <string name="dutycycle">DutyCycle</string>
+    <string name="no_of_pulses">No of pulses</string>
+    <string name="send_to_arduino">Send to Arduino</string>
 </resources>

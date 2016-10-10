@@ -9,26 +9,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.radrajith.laser_blu.MainActivity">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textBox"
-        android:text="Testing"
-        android:layout_below="@+id/graph"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="120sp" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/sendButton"
-        android:layout_alignStart="@+id/roomTemp"
-        android:layout_below="@+id/graph"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="120sp"
+        android:text="Open pulse settings"
+        android:id="@+id/pulseSetButton"
         android:layout_marginLeft="250sp"
-        android:layout_alignBottom="@+id/textBox" />
+        android:layout_below="@+id/graphButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -57,12 +46,12 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="50sp" />
 
-    <TextView
+    <Button
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="temp"
-        android:id="@+id/roomTemp"
+        android:text="Graph"
+        android:id="@+id/graphButton"
         android:layout_below="@+id/graph"
         android:layout_alignParentStart="true"
         android:layout_marginTop="50sp"
@@ -74,4 +63,5 @@
         android:id="@+id/graph"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
 </RelativeLayout>

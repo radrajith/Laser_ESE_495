@@ -38,8 +38,8 @@ import com.jjoe64.graphview.series.PointsGraphSeries;
 public class MainActivity extends AppCompatActivity {
     private Button closeButton;
     private Button restartButton;
-    private EditText sendData;
-    private Button send;
+
+    private Button graphButton, pulseSetButton;
     private BluetoothAdapter btAdapter;
     private BluetoothSocket mySocket;
     private BluetoothDevice myDevice;
@@ -47,11 +47,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView objectTemp;
     private String[] readData;
     private int bytesRead;
+    private int count = 0;
     private boolean run = true;
     OutputStream myOutput;
     InputStream myInput;
     Thread thread;
     GraphView graph;
+    double buff = 0;
+    private int period, duty, pulses;
     PointsGraphSeries<DataPoint> series;
     //ListView deviceList = findViewById(R.id.listView);
     String deviceName = "HC-06";
@@ -59,9 +62,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        arduino_control myclass = new arduino_control(MainActivity.this);
         setContentView(R.layout.activity_main);
-        sendData = (EditText)findViewById(R.id.textBox);
         objectTemp = (TextView)findViewById(R.id.objectTemp);
+        pulseSetButton = (Button)findViewById(R.id.pulseSetButton);
+        pulseSetButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //switch to different activity
+                sendData(10,50,2);
+                Intent intent = new Intent(MainActivity.this, arduino_control.class);
+
+                startActivity(intent);
+            }
+        });
         btConfigure();
         closeButton = (Button)findViewById(R.id.closeButton);
         closeButton.setOnClickListener(new View.OnClickListener(){
@@ -75,17 +88,18 @@ public class MainActivity extends AppCompatActivity {
                 btConfigure();
             }
         });
-        send = (Button) findViewById(R.id.sendButton);
-        send.setOnClickListener(new View.OnClickListener(){
+
+
+        graphButton = (Button) findViewById(R.id.graphButton);
+        graphButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                sendData();
-                sendData.setText("");
+                graph.addSeries(series);
             }
         });
         graph = (GraphView) findViewById(R.id.graph);
         DataPoint[] data = new DataPoint[]{new DataPoint(0,0)};
         series = new PointsGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(0, 0),
+                //new DataPoint(0, 0),
         });
 
     }
@@ -119,6 +133,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        else{
+            dummy();
+        }
+    }
+    public void dummy(){
+        objectTemp.setText("bluetooth not connectetd");
+        onPause();
     }
 //code examples used from http://stackoverflow.com/questions/10327506/android-arduino-bluetooth-data-transfer
 // and android bluetooth api
@@ -128,23 +149,25 @@ public class MainActivity extends AppCompatActivity {
         try {
             mySocket = myDevice.createRfcommSocketToServiceRecord(uuid);
             mySocket.connect();
+            try {
+                myInput = mySocket.getInputStream();
+                myOutput = mySocket.getOutputStream();
+                Toast.makeText(getApplicationContext(), "BT communication established", Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                System.out.println("error at stream");
+            }
+            receiveData();
         } catch (IOException e) {
             System.out.println("problem at serversocket creation");
             System.out.println("didnt connect");
             Toast.makeText(getApplicationContext(), "cannot connect", Toast.LENGTH_LONG).show();
-            sendData.setText("Didnt Connect restart app");
+            dummy();
+            //sendData.setText("Didnt Connect restart app");
             }
-        try {
-            myInput = mySocket.getInputStream();
-            myOutput = mySocket.getOutputStream();
-            Toast.makeText(getApplicationContext(), "BT communication established", Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            System.out.println("error at stream");
-        }
-        receiveData();
+
 }
-    public void sendData(){
-        String writeData = sendData.getText().toString() + "\n";
+    public void sendData(int period, int duty, int pulses){
+        String writeData = period +"," + duty +","+ pulses;
         try {
             myOutput.write(writeData.getBytes());
             Toast.makeText(getApplicationContext(), "Data Sent", Toast.LENGTH_LONG).show();
@@ -152,9 +175,11 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error sending data", Toast.LENGTH_LONG).show();
         }
     }
+
     public void receiveData(){
         final byte[] buffer = new byte[9];
         run = true;
+
         Toast.makeText(getApplicationContext(), "was here", Toast.LENGTH_LONG).show();
         thread = new Thread(new Runnable() {
             public void run() {
@@ -165,12 +190,16 @@ public class MainActivity extends AppCompatActivity {
                         //buffer[bytesRead] = '\0';
                         myHandler.post(new Runnable() {
                             public void run() {
+                                count++;
                                 String bufferData =  new String(buffer).trim();
-                                System.out.println(new String(buffer) + "  " + series.getSize());
+                                try {
+                                     buff = Double.parseDouble(bufferData);
+                                }catch (Exception e){ buff = 0;}
+                                System.out.println(new String(buffer) + "  " + buff);
                                 //System.out.println(readData[0].trim());
                                 //System.out.println(readData[1].trim());
                                 objectTemp.setText(bufferData);
-                                series.appendData(new DataPoint(series.getSize(), Double.parseDouble(bufferData)), true,100);
+                                series.appendData(new DataPoint(count, buff), true ,1000);
                             }
                         });
                         myHandler.obtainMessage(1, bytesRead, -1, buffer).sendToTarget();
@@ -183,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        graph.addSeries(series);
+        //
         thread.start();
     }
     public void closeConn(BluetoothSocket mySocket) {

@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        arduino_control myclass = new arduino_control(MainActivity.this);
+        //arduino_control myclass = new arduino_control(MainActivity.this);
         setContentView(R.layout.activity_main);
         objectTemp = (TextView)findViewById(R.id.objectTemp);
         pulseSetButton = (Button)findViewById(R.id.pulseSetButton);

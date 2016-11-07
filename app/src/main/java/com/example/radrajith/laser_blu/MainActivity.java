@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
     Thread thread;
     GraphView graph;
     double buff = 0;
-    private int period, duty, pulses;
+    private Button send, back;
+    private NumberPicker periodPick, dutyPick, pulsesPick;
+    //OutputStream myOutput;
+    int period = 10, duty = 50, pulses = 2;
     PointsGraphSeries<DataPoint> series;
     //ListView deviceList = findViewById(R.id.listView);
     String deviceName = "HC-06";
@@ -62,19 +66,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //arduino_control myclass = new arduino_control(MainActivity.this);
         setContentView(R.layout.activity_main);
         objectTemp = (TextView)findViewById(R.id.objectTemp);
-        pulseSetButton = (Button)findViewById(R.id.pulseSetButton);
-        pulseSetButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                //switch to different activity
-                sendData(10,50,2);
-                Intent intent = new Intent(MainActivity.this, arduino_control.class);
-
-                startActivity(intent);
-            }
-        });
         btConfigure();
         closeButton = (Button)findViewById(R.id.closeButton);
         closeButton.setOnClickListener(new View.OnClickListener(){
@@ -102,7 +95,45 @@ public class MainActivity extends AppCompatActivity {
                 //new DataPoint(0, 0),
         });
 
+        periodPick = (NumberPicker) findViewById(R.id.periodPick);
+        periodPick.setMaxValue(100);
+        periodPick.setMinValue(1);
+        periodPick.setValue(period);
+        periodPick.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                period = newVal;
+            }
+        });
+
+        dutyPick = (NumberPicker) findViewById(R.id.dutyPick);
+        dutyPick.setMaxValue(100);
+        dutyPick.setMinValue(1);
+        dutyPick.setValue(duty);
+        dutyPick.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                duty = newVal;
+            }
+        });
+
+        pulsesPick = (NumberPicker) findViewById(R.id.pulsesPick);
+        pulsesPick.setMaxValue(100);
+        pulsesPick.setMinValue(0);
+        pulsesPick.setValue(pulses);
+        pulsesPick.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                pulses = newVal;
+            }
+        });
+        send = (Button) findViewById(R.id.sendButton);
+        send.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+               sendData(period,duty, pulses);
+
+            }
+        });
+
     }
+
 
     public void btConfigure() {
         btAdapter = BluetoothAdapter.getDefaultAdapter();

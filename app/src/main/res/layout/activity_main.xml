@@ -12,20 +12,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open pulse settings"
-        android:id="@+id/pulseSetButton"
-        android:layout_marginLeft="250sp"
-        android:layout_below="@+id/graphButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Close Connection"
         android:id="@+id/closeButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sendButton"
+        android:text="@string/send_to_arduino"
+        android:layout_above="@+id/pulsesText"
+        android:layout_alignEnd="@+id/closeButton" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -42,9 +39,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="temp"
         android:id="@+id/objectTemp"
-        android:layout_below="@+id/graph"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="50sp" />
+        android:layout_alignTop="@+id/pulsesPick"
+        android:layout_alignStart="@+id/sendButton" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -52,11 +48,61 @@
         android:layout_height="wrap_content"
         android:text="Graph"
         android:id="@+id/graphButton"
-        android:layout_below="@+id/graph"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="50sp"
-        android:layout_marginLeft="250sp" />
+        android:layout_marginLeft="0dp"
+        android:layout_below="@+id/objectTemp"
+        android:layout_alignStart="@+id/objectTemp" />
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/periodPick"
+        android:orientation="vertical"
+        android:layout_alignTop="@+id/pulsesPick"
+        android:layout_alignParentStart="true" />
 
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dutyPick"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:layout_alignTop="@+id/periodPick"
+        android:layout_toEndOf="@+id/periodText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/period"
+        android:id="@+id/periodText"
+        android:layout_above="@+id/restart"
+        android:layout_alignStart="@+id/restart" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/dutycycle"
+        android:id="@+id/dutyText"
+        android:layout_above="@+id/restart"
+        android:layout_toEndOf="@+id/periodText"
+        android:layout_marginLeft="15dp" />
+
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/pulsesPick"
+        android:orientation="vertical"
+        android:layout_alignBottom="@+id/sendButton"
+        android:layout_toEndOf="@+id/dutyPick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/no_of_pulses"
+        android:id="@+id/pulsesText"
+        android:layout_alignBottom="@+id/dutyText"
+        android:layout_alignStart="@+id/pulsesPick" />
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
         android:layout_height="200dip"

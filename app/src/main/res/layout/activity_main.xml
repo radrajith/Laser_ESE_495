@@ -110,4 +110,17 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/powerText"
+        android:layout_above="@+id/sendButton"
+        android:layout_alignEnd="@+id/sendButton"
+        android:layout_below="@+id/graphButton"
+        android:layout_toEndOf="@+id/pulsesText"
+        android:editable="true"
+        android:text="1.0" />
+
 </RelativeLayout>

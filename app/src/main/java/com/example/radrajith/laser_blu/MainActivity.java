@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice myDevice;
     private Handler myHandler = new Handler();
     private TextView objectTemp;
+    private EditText powerVal;
     private String[] readData;
     private int bytesRead;
     private int count = 0;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private NumberPicker periodPick, dutyPick, pulsesPick;
     //OutputStream myOutput;
     int period = 10, duty = 50, pulses = 2;
+    String power = "1.0";
     PointsGraphSeries<DataPoint> series;
     //ListView deviceList = findViewById(R.id.listView);
     String deviceName = "HC-06";
@@ -68,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         objectTemp = (TextView)findViewById(R.id.objectTemp);
+        powerVal = (EditText)findViewById(R.id.powerText);
+        power = powerVal.getText().toString();
         btConfigure();
         closeButton = (Button)findViewById(R.id.closeButton);
         closeButton.setOnClickListener(new View.OnClickListener(){
@@ -169,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void dummy(){
-        objectTemp.setText("bluetooth not connectetd");
+        objectTemp.setText("bluetooth not connected");
         onPause();
     }
 //code examples used from http://stackoverflow.com/questions/10327506/android-arduino-bluetooth-data-transfer
@@ -198,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
 }
     public void sendData(int period, int duty, int pulses){
-        String writeData = period +"," + duty +","+ pulses;
+        String writeData = period +"," + duty +","+ pulses + ","+power;
         try {
             myOutput.write(writeData.getBytes());
             Toast.makeText(getApplicationContext(), "Data Sent", Toast.LENGTH_LONG).show();
